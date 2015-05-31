@@ -8,7 +8,7 @@ This can be useful in situations, say, where you need to rate limit requests to 
 
 ## Usage
 
-[![Clojars Project](http://clojars.org/indole/latest-version.svg)]
+[![Clojars Project](http://clojars.org/indole/latest-version.svg)](http://clojars.org/indole)
 
 ```clojure
 (require '[indole.core :refer [make-rate-limiter can-charge?!]])
