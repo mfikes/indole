@@ -10,10 +10,10 @@
   period specified in milliseconds."
   [period-ms bucket-size]
   {:pre [(pos? period-ms) (pos? bucket-size)]}
-  (atom {:period-ms          period-ms
-         :bucket-size        bucket-size
-         :bucket-level       bucket-size
-         :last-time-adjusted (get-current-time-millis)}))
+  (atom {:increment-period-ms   (quot period-ms bucket-size)
+         :bucket-size           bucket-size
+         :bucket-level          bucket-size
+         :last-time-incremented (get-current-time-millis)}))
 
 (defn- increment-bucket-level
   [current-level max-level increments]
@@ -29,15 +29,17 @@
 
 (defn- charge-request
   [rate-limiter-state current-time-millis]
-  (let [period-ms (:period-ms rate-limiter-state)
+  (let [increment-period-ms (:increment-period-ms rate-limiter-state)
         adjusted-state (if (and (< (:bucket-level rate-limiter-state) (:bucket-size rate-limiter-state))
-                             (> current-time-millis (:last-time-adjusted rate-limiter-state)))
-                         (let [bucket-increments (- (quot current-time-millis period-ms)
-                                                   (quot (:last-time-adjusted rate-limiter-state) period-ms))]
-                           (-> rate-limiter-state
-                             (update-in [:bucket-level]
-                               increment-bucket-level (inc (:bucket-size rate-limiter-state)) bucket-increments)
-                             (assoc :last-time-adjusted current-time-millis)))
+                             (> current-time-millis (:last-time-incremented rate-limiter-state)))
+                         (let [bucket-increments (- (quot current-time-millis increment-period-ms)
+                                                   (quot (:last-time-incremented rate-limiter-state) increment-period-ms))]
+                           (if (pos? bucket-increments)
+                             (-> rate-limiter-state
+                               (update-in [:bucket-level]
+                                 increment-bucket-level (:bucket-size rate-limiter-state) bucket-increments)
+                               (assoc :last-time-incremented current-time-millis))
+                             rate-limiter-state))
                          rate-limiter-state)]
     (-> adjusted-state
       (mark-decremented)
