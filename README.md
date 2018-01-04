@@ -8,7 +8,7 @@ This can be useful in situations, say, where you need to rate limit requests to 
 
 ## Usage
 
-[![Clojars Project](http://clojars.org/indole/latest-version.svg)](http://clojars.org/indole)
+[![Clojars Project](https://img.shields.io/clojars/v/indole.svg)](https://clojars.org/indole)
 
 ```clojure
 (require '[indole.core :refer [make-rate-limiter can-charge?!]])
@@ -21,7 +21,7 @@ This can be useful in situations, say, where you need to rate limit requests to 
 
 ## License
 
-Copyright © 2015 Mike Fikes
+Copyright © 2015–2018 Mike Fikes
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
